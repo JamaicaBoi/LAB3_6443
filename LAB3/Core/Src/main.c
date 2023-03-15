@@ -46,13 +46,14 @@ DMA_HandleTypeDef hdma_tim2_ch1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint32_t duty = 100;
 uint32_t InputCapture[IC_BUFFER_SIZE];
 float avgRisingedgePeriod;
 float MotorReadRPM = 0;
 
 int MotorControlEnable = 1;
-float MotorSetRPM = 18;
+float MotorSetRPM = 19;
+int MotorSetDuty = 50;
+uint32_t duty = 100;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -136,6 +137,10 @@ HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, InputCapture, IC_BUFFER_SIZE);
 				  duty-=1;
 			  }
 		  }
+	  }
+
+	  if(MotorControlEnable == 0){
+		  duty = MotorSetDuty*10;
 	  }
 	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty);
 
