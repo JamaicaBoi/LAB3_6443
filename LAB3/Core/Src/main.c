@@ -121,14 +121,14 @@ HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, InputCapture, IC_BUFFER_SIZE);
     /* USER CODE BEGIN 3 */
 	  static uint32_t timestamp = 0;
 	  if(HAL_GetTick()>= timestamp){
-		  timestamp = HAL_GetTick()+50;
+		  timestamp = HAL_GetTick()+5;
 		  avgRisingedgePeriod = IC_Calc_Period();
 		  MotorReadRPM = 1/((avgRisingedgePeriod*768)/60000000);
 	  }
 
 	  static uint32_t Dutytime = 0;
 	  if(HAL_GetTick()>= Dutytime){
-		  Dutytime = HAL_GetTick() + 50;
+		  Dutytime = HAL_GetTick() + 5;
 		  if(MotorControlEnable == 1){
 			  if(MotorReadRPM < MotorSetRPM){
 				  duty+=1;
@@ -141,6 +141,13 @@ HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, InputCapture, IC_BUFFER_SIZE);
 
 	  if(MotorControlEnable == 0){
 		  duty = MotorSetDuty*10;
+	  }
+
+	  if(duty > 1000 && duty < 1500){
+		  duty = 1000;
+	  }
+	  else if(duty < 4294967296 && duty > 1500){
+		  duty = 0;
 	  }
 	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty);
 
